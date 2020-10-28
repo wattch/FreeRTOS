@@ -81,23 +81,7 @@ BaseType_t Sockets_Connect( Socket_t * pTcpSocket,
             socketStatus = FREERTOS_SOCKETS_WRAPPER_NETWORK_ERROR;
         }
     }
-
-    if( socketStatus == 0 )
-    {
-        /* Establish connection. */
-        LogDebug( ( "Creating TCP Connection to %s.", pHostName ) );
-        socketStatus = FreeRTOS_connect( tcpSocket, &serverAddress, sizeof( serverAddress ) );
-
-        if( socketStatus != 0 )
-        {
-            LogError( ( "Failed to connect to server: FreeRTOS_Connect failed: ReturnCode=%d,"
-                        " Hostname=%s, Port=%u.",
-                        socketStatus,
-                        pHostName,
-                        port ) );
-        }
-    }
-
+    
     if( socketStatus == 0 )
     {
         /* Set socket receive timeout. */
@@ -117,6 +101,22 @@ BaseType_t Sockets_Connect( Socket_t * pTcpSocket,
                                       FREERTOS_SO_SNDTIMEO,
                                       &transportTimeout,
                                       sizeof( TickType_t ) );
+    }
+
+    if( socketStatus == 0 )
+    {
+        /* Establish connection. */
+        LogDebug( ( "Creating TCP Connection to %s.", pHostName ) );
+        socketStatus = FreeRTOS_connect( tcpSocket, &serverAddress, sizeof( serverAddress ) );
+
+        if( socketStatus != 0 )
+        {
+            LogError( ( "Failed to connect to server: FreeRTOS_Connect failed: ReturnCode=%d,"
+                        " Hostname=%s, Port=%u.",
+                        socketStatus,
+                        pHostName,
+                        port ) );
+        }
     }
 
     /* Clean up on failure. */
